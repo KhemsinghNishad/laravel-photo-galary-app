@@ -33,6 +33,8 @@
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPhotoModal">
             Add Photo
         </button>
+        <a href="{{ route('logout') }}" class="btn btn-danger">Logout</a>
+
     </div>
 
     <!-- Gallery -->

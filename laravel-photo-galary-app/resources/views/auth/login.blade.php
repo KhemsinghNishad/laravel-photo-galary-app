@@ -56,6 +56,12 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
 
                 <form action="" id="userLoginForm" name="userLoginForm" method="POST">
 
@@ -72,7 +78,7 @@
                     </div>
 
                     <div class="text-end mb-3">
-                        <a href="#" class="text-decoration-none">Forgot Password?</a>
+                        <a href="{{ route('password.request') }}" class="text-decoration-none">Forgot Password?</a>
                     </div>
 
                     <button type="submit" class="btn btn-dark w-100 btn-lg">Login</button>
@@ -127,7 +133,10 @@
                     }
                 }
 
-                window.location.href = "{{ route('home') }}";
+                if (response.status === true) {
+                    window.location.href = "{{ route('home') }}";
+                }
+
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log('AJAX error: ' + textStatus + ' : ' + errorThrown);

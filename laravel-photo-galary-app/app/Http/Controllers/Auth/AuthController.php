@@ -16,6 +16,11 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
+    public function logout(Request $request){
+        Auth::logout();        
+        return redirect()->route('login')->with('success', 'Logged out successfully.');
+    }
+
     public function registerProcess(Request $request){
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|integer|unique:users,user_id',
@@ -23,7 +28,7 @@ class AuthController extends Controller
             'email' => 'required|email',
             'phone' => 'required',
             'address' => 'required',
-            'password' => 'required|min:6|confirmed'
+            'password' => 'required|min:8|confirmed'
         ]);
 
         if ($validator->fails()) {
@@ -58,7 +63,7 @@ class AuthController extends Controller
         
         if($validator->fails()){
             return response()->json([
-                'status' => 'error',
+                'status' => false,
                 'errors' => $validator->errors()
             ]);
         }
@@ -66,13 +71,13 @@ class AuthController extends Controller
         if(Auth::attempt(['user_id' => $request->user_id, 'password' => $request->password])){
             $request->session()->flash('success', 'Login successful!');
             return response()->json([
-                'status' => 'success',
+                'status' => true,
                 'message' => 'Login successful!'
             ]);
         } else {
             $request->session()->flash('error', 'Invalid credentials, either email or password incorrect');
             return response()->json([
-                'status' => 'error',
+                'status' => false,
                 'message' => 'Invalid credentials, either email or password incorrect'
             ]);
         }
