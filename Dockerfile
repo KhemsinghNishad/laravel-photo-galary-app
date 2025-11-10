@@ -1,17 +1,23 @@
 FROM php:8.2-fpm
 
+# System dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip libzip-dev libicu-dev \
-    && docker-php-ext-install pdo pdo_mysql zip intl
+    git unzip libzip-dev libpq-dev libicu-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip intl
 
-# Add swap for Render builds
-RUN fallocate -l 1G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
-
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
+
+# Copy project files
 COPY . .
 
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
+# Expose port
+EXPOSE 10000
+
+# Start Laravel
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
